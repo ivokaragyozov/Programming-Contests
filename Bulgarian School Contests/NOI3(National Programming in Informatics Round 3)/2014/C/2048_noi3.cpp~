@@ -1,0 +1,217 @@
+#include <bits/stdc++.h>
+#define endl '\n'
+using namespace std;
+
+int maxScore, moves, cnt1, cnt2, cnt3, cnt4, a;
+
+void moveUp(int matrix[][3], int matrixUp[][3])
+{
+	cnt1 = 0;
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			matrixUp[i][j] = matrix[i][j];
+		}
+	}
+
+	for(int i = 1; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			if(matrixUp[i - 1][j] == 0)
+			{
+				matrixUp[i - 1][j] = matrixUp[i][j];
+				matrixUp[i][j] = 0;
+			}
+		}
+	}
+
+	for(int j = 0; j < 3; j++)
+	{
+		for(int i = 1; i < 3; i++)
+		{
+			if(matrixUp[i][j] == matrixUp[i - 1][j])
+			{
+				cnt1 += 2 * matrixUp[i - 1][j];
+				matrixUp[i - 1][j] = 2 * matrixUp[i - 1][j];
+				matrixUp[i][j] = 0;
+				break;
+			}
+		}
+	}
+}
+void moveRight(int matrix[][3], int matrixRight[][3])
+{
+	cnt2 = 0;
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			matrixRight[i][j] = matrix[i][j];
+		}
+	}
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 1; j >= 0; j--)
+		{
+			if(matrixRight[i][j + 1] == 0)
+			{
+				matrixRight[i][j + 1] = matrixRight[i][j];
+				matrixRight[i][j] = 0;
+			}
+		}
+	}
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 1; j >= 0; j--)
+		{
+			if(matrixRight[i][j] == matrixRight[i][j + 1])
+			{
+				cnt2 += 2 * matrixRight[i][j];
+				matrixRight[i + 1][j] = 2 * matrixRight[i][j];
+				matrixRight[i][j] = 0;
+				break;
+			}
+		}
+	}
+}
+void moveDown(int matrix[][3], int matrixDown[][3])
+{
+	cnt3 = 0;
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			matrixDown[i][j] = matrix[i][j];
+		}
+	}
+
+	for(int j = 0; j < 3; j++)
+	{
+		for(int i = 1; i >= 0; i--)
+		{
+			if(matrixDown[i + 1][j] == 0)
+			{
+				matrixDown[i + 1][j] = matrixDown[i][j];
+				matrixDown[i][j] = 0;
+			}
+		}
+	}
+
+	for(int j = 0; j < 3; j++)
+	{
+		for(int i = 1; i >= 0; i--)
+		{
+			if(matrixDown[i][j] == matrixDown[i + 1][j])
+			{
+				cnt3 += 2 * matrixDown[i][j];
+				matrixDown[i + 1][j] = 2 * matrixDown[i][j]; 
+				matrixDown[i][j] = 0;
+			}
+		}
+	}
+}
+void moveLeft(int matrix[][3], int matrixLeft[][3])
+{
+	cnt4 = 0;
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			matrixLeft[i][j] = matrix[i][j];
+		}
+	}
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 1; j < 3; j++)
+		{
+			if(matrixLeft[i][j - 1] == 0)
+			{
+				matrixLeft[i][j - 1] = matrixLeft[i][j];
+				matrixLeft[i][j] = 0;
+			}
+		}
+	}
+
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 1; j < 3; j++)
+		{
+			if(matrixLeft[i][j] == matrixLeft[i][j - 1])
+			{
+				cnt4 = 2 * matrixLeft[i][j];
+				matrixLeft[i][j - 1] = 2 * matrixLeft[i][j];
+				matrixLeft[i][j] = 0;
+			}
+		}
+	}
+}
+void solve(int currScore, int cntMoves, int matrix[][3])
+{
+	a++;
+	if(a == 2) return;
+
+	if(currScore > maxScore)
+	{
+		maxScore = currScore;
+		moves = cntMoves;
+	}
+	if(currScore == maxScore && moves > cntMoves) moves = cntMoves;
+
+	int matrixUp[3][3], matrixRight[3][3], matrixDown[3][3], matrixLeft[3][3];
+
+	moveUp(matrix, matrixUp);
+	moveRight(matrix, matrixRight);
+	moveDown(matrix, matrixDown);
+	moveLeft(matrix, matrixLeft);
+	
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			cout<<matrix[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			cout<<matrixLeft[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	return;
+
+	solve(currScore + cnt1, cntMoves + 1, matrixUp);
+	solve(currScore + cnt2, cntMoves + 1, matrixRight);
+	solve(currScore + cnt3, cntMoves + 1, matrixDown);
+	solve(currScore + cnt4, cntMoves + 1, matrixLeft);
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+
+	int matrix[3][3];
+	for(int i = 0; i < 3; i++)
+	{
+		for(int j = 0; j < 3; j++)
+		{
+			cin>>matrix[i][j];
+		}
+	}
+
+	solve(0, 0, matrix);
+
+	cout<<maxScore<<" "<<moves<<endl;
+	return 0;
+}
